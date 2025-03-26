@@ -1,4 +1,4 @@
-const itens = [
+const items = [
     { nome: "Laptop", peso: 2.0, tamanho: 3000, apreco: 9 },
     { nome: "Livro", peso: 0.5, tamanho: 500, apreco: 7 },
     { nome: "Fones de ouvido", peso: 0.2, tamanho: 100, apreco: 8 },
@@ -21,7 +21,20 @@ const itens = [
     { nome: "Pequeno kit de costura", peso: 0.2, tamanho: 100, apreco: 4 },
   ];
   
-  // Exemplo de como acessar os dados de um item
-  console.log(itens[0].nome); // Saída: Laptop
-  console.log(itens[0].peso); // Saída: 2
-  
+function generateInitialPopulation(popSize){
+    const population = [];
+    const numItems = items.length;
+    
+    for (let i = 0; i < popSize; i++) {
+        const individual = [];
+        for (let j = 0; j < numItems; j++) {
+            individual.push(Math.round(Math.random()));
+        }
+        population.push(individual);
+        }
+    
+    return population;
+}
+
+const population = generateInitialPopulation(5);
+console.log(population);
