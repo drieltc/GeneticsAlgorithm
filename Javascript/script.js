@@ -43,10 +43,10 @@ function generateInitialPopulation(popSize){
     return population;
 }
 /**
- * Calculates the total weight of the itens selected in an individual.
+ * Calculates the total weight of the itens an individual carries.
  *
- * @param {Array<number>} individual - A binary array representing the selected itens.
- * @returns {number} The total weight of the selected itens.
+ * @param {Array<number>} individual - A binary array representing the carried itens.
+ * @returns {number} The total weight of the carried itens.
  */
 
 function calculateTotalWeight(individual){
