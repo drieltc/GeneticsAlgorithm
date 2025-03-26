@@ -1,24 +1,24 @@
-const items = [
-    { nome: "Laptop", peso: 2.0, tamanho: 3000, apreco: 9 },
-    { nome: "Livro", peso: 0.5, tamanho: 500, apreco: 7 },
-    { nome: "Fones de ouvido", peso: 0.2, tamanho: 100, apreco: 8 },
-    { nome: "Câmera", peso: 1.0, tamanho: 800, apreco: 9 },
-    { nome: "Carregador de celular", peso: 0.3, tamanho: 200, apreco: 8 },
-    { nome: "Power bank", peso: 0.4, tamanho: 300, apreco: 7 },
-    { nome: "Kit de higiene pessoal", peso: 0.8, tamanho: 600, apreco: 6 },
-    { nome: "Remédios", peso: 0.2, tamanho: 100, apreco: 10 },
-    { nome: "Documentos importantes", peso: 0.1, tamanho: 50, apreco: 10 },
-    { nome: "Lanches", peso: 0.5, tamanho: 400, apreco: 5 },
-    { nome: "Garrafa de água reutilizável", peso: 0.6, tamanho: 700, apreco: 6 },
-    { nome: "Blusa extra", peso: 0.7, tamanho: 900, apreco: 7 },
-    { nome: "Meias extras", peso: 0.2, tamanho: 200, apreco: 5 },
-    { nome: "Cachecol", peso: 0.3, tamanho: 300, apreco: 6 },
-    { nome: "Óculos de sol", peso: 0.1, tamanho: 100, apreco: 7 },
-    { nome: "Chapéu", peso: 0.2, tamanho: 200, apreco: 6 },
-    { nome: "Travesseiro de viagem", peso: 0.4, tamanho: 500, apreco: 8 },
-    { nome: "Máscara de dormir", peso: 0.1, tamanho: 50, apreco: 7 },
-    { nome: "Livro de colorir e lápis de cor", peso: 0.6, tamanho: 600, apreco: 5 },
-    { nome: "Pequeno kit de costura", peso: 0.2, tamanho: 100, apreco: 4 },
+const itens = [
+    { name: "Laptop", weight: 2.0, size: 3000, value: 9 },
+    { name: "Livro", weight: 0.5, size: 500, value: 7 },
+    { name: "Fones de ouvido", weight: 0.2, size: 100, value: 8 },
+    { name: "Câmera", weight: 1.0, size: 800, value: 9 },
+    { name: "Carregador de celular", weight: 0.3, size: 200, value: 8 },
+    { name: "Power bank", weight: 0.4, size: 300, value: 7 },
+    { name: "Kit de higiene pessoal", weight: 0.8, size: 600, value: 6 },
+    { name: "Remédios", weight: 0.2, size: 100, value: 10 },
+    { name: "Documentos importantes", weight: 0.1, size: 50, value: 10 },
+    { name: "Lanches", weight: 0.5, size: 400, value: 5 },
+    { name: "Garrafa de água reutilizável", weight: 0.6, size: 700, value: 6 },
+    { name: "Blusa extra", weight: 0.7, size: 900, value: 7 },
+    { name: "Meias extras", weight: 0.2, size: 200, value: 5 },
+    { name: "Cachecol", weight: 0.3, size: 300, value: 6 },
+    { name: "Óculos de sol", weight: 0.1, size: 100, value: 7 },
+    { name: "Chapéu", weight: 0.2, size: 200, value: 6 },
+    { name: "Travesseiro de viagem", weight: 0.4, size: 500, value: 8 },
+    { name: "Máscara de dormir", weight: 0.1, size: 50, value: 7 },
+    { name: "Livro de colorir e lápis de cor", weight: 0.6, size: 600, value: 5 },
+    { name: "Pequeno kit de costura", weight: 0.2, size: 100, value: 4 },
   ];
 
 /**
@@ -30,11 +30,11 @@ const items = [
 
 function generateInitialPopulation(popSize){
     const population = [];
-    const numItems = items.length;
+    const numitens = itens.length;
     
     for (let i = 0; i < popSize; i++) {
         const individual = [];
-        for (let j = 0; j < numItems; j++) {
+        for (let j = 0; j < numitens; j++) {
             individual.push(Math.round(Math.random()));
         }
         population.push(individual);
@@ -43,16 +43,16 @@ function generateInitialPopulation(popSize){
     return population;
 }
 /**
- * Calculates the total weight of the items selected in an individual.
+ * Calculates the total weight of the itens selected in an individual.
  *
- * @param {Array<number>} individual - A binary array representing the selected items.
- * @returns {number} The total weight of the selected items.
+ * @param {Array<number>} individual - A binary array representing the selected itens.
+ * @returns {number} The total weight of the selected itens.
  */
 
 function calculateTotalWeight(individual){
     let totalWeight = 0;
     for (let i = 0; i < individual.length; i++) {
-        totalWeight += individual[i] * items[i].peso;
+        totalWeight += individual[i] * itens[i].weight;
     }
     return totalWeight;
 }
