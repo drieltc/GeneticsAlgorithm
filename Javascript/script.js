@@ -42,6 +42,23 @@ function generateInitialPopulation(popSize){
     
     return population;
 }
+/**
+ * Calculates the total weight of the items selected in an individual.
+ *
+ * @param {Array<number>} individual - A binary array representing the selected items.
+ * @returns {number} The total weight of the selected items.
+ */
+
+function calculateTotalWeight(individual){
+    let totalWeight = 0;
+    for (let i = 0; i < individual.length; i++) {
+        totalWeight += individual[i] * items[i].peso;
+    }
+    return totalWeight;
+}
 
 const population = generateInitialPopulation(5);
-console.log(population);
+
+population.forEach((individual) => {
+    console.log(calculateTotalWeight(individual));
+});
