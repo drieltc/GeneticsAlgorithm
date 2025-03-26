@@ -20,7 +20,14 @@ const items = [
     { nome: "Livro de colorir e lápis de cor", peso: 0.6, tamanho: 600, apreco: 5 },
     { nome: "Pequeno kit de costura", peso: 0.2, tamanho: 100, apreco: 4 },
   ];
-  
+
+/**
+ * Generates the initial population for the Genetic Algorithm.
+ *
+ * @param {number} populationSize - The size of the population to generate.
+ * @returns {Array<Array<number>>} An array of individuals, each represented as a binary array.
+*/
+
 function generateInitialPopulation(popSize){
     const population = [];
     const numItems = items.length;
