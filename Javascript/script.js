@@ -27,7 +27,6 @@ const itens = [
  * @param {number} populationSize - The size of the population to generate.
  * @returns {Array<Array<number>>} An array of individuals, each represented as a binary array.
 */
-
 function generateInitialPopulation(popSize){
     const population = [];
     const numitens = itens.length;
@@ -42,13 +41,13 @@ function generateInitialPopulation(popSize){
     
     return population;
 }
+
 /**
  * Calculates the total weight of the itens an individual carries.
  *
  * @param {Array<number>} individual - A binary array representing the carried itens.
  * @returns {number} The total weight of the carried itens.
  */
-
 function calculateTotalWeight(individual){
     let totalWeight = 0;
     for (let i = 0; i < individual.length; i++) {
@@ -57,8 +56,22 @@ function calculateTotalWeight(individual){
     return totalWeight;
 }
 
+/**
+ * Calculates the total size of the itens an individual carries.
+ * 
+ * @param {Array<number>} individual 
+ * @returns {number} The total size of the carried itens.
+ */
+function calculateTotalSize(individual){
+    let totalSize = 0;
+    for (let i = 0; i < individual.length; i++) {
+        totalSize += individual[i] * itens[i].size;
+    }
+    return totalSize;
+}
+
 const population = generateInitialPopulation(5);
 
 population.forEach((individual) => {
-    console.log(calculateTotalWeight(individual));
+    console.log(calculateTotalSize(individual));
 });
