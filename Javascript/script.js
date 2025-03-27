@@ -21,6 +21,7 @@ const itens = [
     { name: "Pequeno kit de costura", weight: 0.2, size: 100, value: 4 },
   ];
 
+const MAX_WEIGHT = 5.0;
 /**
  * Generates the initial population for the Genetic Algorithm.
  *
@@ -70,8 +71,28 @@ function calculateTotalSize(individual){
     return totalSize;
 }
 
+
+/**
+ * Calculates the total value of an individual's carried itens.
+ * 
+ * @param {Array<number>} individual 
+ * @returns {number} The total value of the carried itens. 0 if the total weight exceeds the maximum allowed.
+ */
+function calculateTotalValue(individual){
+    let totalValue = 0;
+    let weight = calculateTotalWeight(individual);
+    if (weight > MAX_WEIGHT) {
+        return 0;
+    }
+
+    for (let i = 0; i < individual.length; i++) {
+        totalValue += individual[i] * itens[i].value;
+    }
+    return totalValue;
+}
+
 const population = generateInitialPopulation(5);
 
 population.forEach((individual) => {
-    console.log(calculateTotalSize(individual));
+    console.log(calculateTotalValue(individual));
 });
