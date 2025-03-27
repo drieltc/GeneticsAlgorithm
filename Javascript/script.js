@@ -9,6 +9,16 @@ class Individual{
     }
 }
 
+function createIndividualFromRow(row){
+    const values = rowsplit(',');
+    const id = values[0];
+    const age = values[1];
+    const condition = values[2];
+    const expressivity = values[3];
+    const genes = values.slice(4);
+    return new Individual(id, age, condition, expressivity, genes);
+}
+
 // Fetch the CSV file and log its content
 fetch('/Dados/dataset_amostra.csv')
   .then(response => {
