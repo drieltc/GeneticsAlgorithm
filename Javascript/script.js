@@ -1,3 +1,14 @@
+class Individual{
+    constructor(id, age, condition, expressivity, genes){
+        this.id = id;
+        this.age = age;
+        this.condition = condition;
+        this.expressivity = expressivity;
+        this.genes = genes.map(gene => parseInt(gene));
+        this.fitness = 0;
+    }
+}
+
 // Fetch the CSV file and log its content
 fetch('/Dados/dataset_amostra.csv')
   .then(response => {
