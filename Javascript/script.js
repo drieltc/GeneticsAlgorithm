@@ -9,40 +9,34 @@ class Individual{
     }
 }
 
-function createIndividualFromRow(row){
-    const values = rowsplit(',');
+// Function to create an Individual from a CSV row
+function createIndividualFromRow(row) {
+    const values = row.split(',');
     const id = values[0];
     const age = values[1];
     const condition = values[2];
     const expressivity = values[3];
-    const genes = values.slice(4);
+    const genes = values.slice(4); // Genes start from the 5th column
     return new Individual(id, age, condition, expressivity, genes);
-}
-
-// Fetch the CSV file and log its content
+  }
+  
+// Fetch the CSV file and create the initial population
 fetch('/Dados/dataset_amostra.csv')
-  .then(response => {
+.then(response => {
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    throw new Error(`HTTP error! status: ${response.status}`);
     }
     return response.text();
-  })
-  .then(data => {
-    console.log('CSV File Content:\n', data);
-
-    // Process the CSV data
+})
+.then(data => {
     const lines = data.trim().split('\n');
-    console.log("\nCSV File Lines:");
-    lines.forEach((line, index) => {
-      console.log(`Line ${index + 1}: ${line}`);
-    });
+    const header = lines.shift().split(','); // Remove the header line and get the header
+    const initialPopulation = lines.map(createIndividualFromRow); // Create individuals from the remaining lines
 
-    // Example of parsing the first line (assuming it's a header)
-    if (lines.length > 0) {
-      const header = lines[0].split(',');
-      console.log("\nCSV Header:", header);
-    }
-  })
-  .catch(error => {
-    console.error('Error fetching the CSV file:', error);
-  });
+    console.log('Initial Population:', initialPopulation);
+    runGeneticAlgorithm(initialPopulation); //to be continued
+})
+.catch(error => {
+    console.error('Error fetching or processing the CSV file:', error);
+});
+  
