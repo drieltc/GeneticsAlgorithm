@@ -19,7 +19,16 @@ function createIndividualFromRow(row) {
     const genes = values.slice(4); // Genes start from the 5th column
     return new Individual(id, age, condition, expressivity, genes);
   }
-  
+
+function calculateFitness(individual){
+    individual.fitness = individual.expressivity;
+}
+
+function runGeneticAlgorithm(initialPopulation, generations = 100){
+    let cpInitialPopulation = [...initialPopulation]; // Copy of the initial population to avoid modifying it
+    
+    cpInitialPopulation.forEach(calculateFitness);
+}  
 // Fetch the CSV file and create the initial population
 fetch('/Dados/dataset_amostra.csv')
 .then(response => {
@@ -33,8 +42,7 @@ fetch('/Dados/dataset_amostra.csv')
     const header = lines.shift().split(','); // Remove the header line and get the header
     const initialPopulation = lines.map(createIndividualFromRow); // Create individuals from the remaining lines
 
-    console.log('Initial Population:', initialPopulation);
-    runGeneticAlgorithm(initialPopulation); //to be continued
+    runGeneticAlgorithm(initialPopulation);
 })
 .catch(error => {
     console.error('Error fetching or processing the CSV file:', error);
