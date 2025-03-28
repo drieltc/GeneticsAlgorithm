@@ -1,5 +1,5 @@
-class Individual{
-    constructor(id, age, condition, expressivity, genes){
+class Individual {
+    constructor(id, age, condition, expressivity, genes) {
         this.id = id;
         this.age = age;
         this.condition = condition;
@@ -18,12 +18,13 @@ function createIndividualFromRow(row) {
     const expressivity = values[3];
     const genes = values.slice(4); // Genes start from the 5th column
     return new Individual(id, age, condition, expressivity, genes);
-  }
+}
 
-function calculateFitness(individual){
+function calculateFitness(individual) {
     individual.fitness = individual.expressivity;
 }
 
+// Tournament Selection
 function selectParent(population, tournamentSize = 3) {
     const tournament = [];
     for (let i = 0; i < tournamentSize; i++) {
@@ -47,7 +48,7 @@ function crossover(parent1, parent2) {
     // Otherwise, it is the average of the parents' expressivity
     let expressivity = 0;
     if (condition !== "S") {
-        expressivity = Math.random();
+        expressivity = Math.floor((parent1.expressivity + parent2.expressivity) / 2);
     }
 
     // Create a new child individual
@@ -65,50 +66,56 @@ function crossover(parent1, parent2) {
     return child;
 }
 
-function mutate(individual){
-    change = false;
-    for (let i = 0; i < individual.genes.length; i++){
-        if (Math.random() < 0.01){ // 1% mutation chance
+function mutate(individual, mutationRate = 0.01) {
+    let change = false;
+    for (let i = 0; i < individual.genes.length; i++) {
+        if (Math.random() < mutationRate) { // mutation chance
             individual.genes[i] = Math.floor(Math.random() * 2);
             change = true;
         }
     }
     if (change) {
-        if (individual.condition !== "S"){
+        if (individual.condition !== "S") {
             individual.expressivity = Math.floor(Math.random()); // Random expressivity
         }
     }
     return individual;
 }
 
-function runGeneticAlgorithm(initialPopulation, generations = 100){
+function runGeneticAlgorithm(initialPopulation, populationSize = 100, generations = 100, mutationRate = 0.01, tournamentSize = 3) {
     let cpInitialPopulation = [...initialPopulation]; // Copy of the initial population to avoid modifying it
-    
+
     // Calculate fitness for each individual in the initial population
     cpInitialPopulation.forEach(calculateFitness);
     cpInitialPopulation.sort((a, b) => b.fitness - a.fitness); // Sort by fitness in descending order
 
     let population = [...cpInitialPopulation]
 
-    for (let generation = 0; generation < generations; generation++){
+    // Ensure the population size is met
+    while (population.length < populationSize) {
+        const randomIndex = Math.floor(Math.random() * initialPopulation.length);
+        population.push(new Individual(...Object.values(initialPopulation[randomIndex])));
+    }
+
+    for (let generation = 0; generation < generations; generation++) {
         const newPopulation = [];
 
         // Keep the top 10% of the population
         const top10Percent = Math.floor(population.length * 0.1);
-        for (let i = 0; i < top10Percent; i++){
+        for (let i = 0; i < top10Percent; i++) {
             newPopulation.push(population[i]);
         }
 
         // Create the rest of the new generation
-        while (newPopulation.length < population.length){
+        while (newPopulation.length < population.length) {
             // Selection
-            const parent1 = selectParent(population);
-            const parent2 = selectParent(population);
-            
-            let child = crossover(parent1, parent2);
+            const parent1 = selectParent(population, tournamentSize);
+            const parent2 = selectParent(population, tournamentSize);
+
+            const child = crossover(parent1, parent2);
 
             // Mutation
-            child = mutate(child);
+            mutate(child, mutationRate);
 
             calculateFitness(child);
 
@@ -121,23 +128,23 @@ function runGeneticAlgorithm(initialPopulation, generations = 100){
     population.sort((a, b) => b.fitness - a.fitness);
     console.log("Best individual found:", population[0]);
     return population[0];
-}  
+}
+
 // Fetch the CSV file and create the initial population
 fetch('/Dados/dataset_amostra.csv')
-.then(response => {
-    if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.text();
-})
-.then(data => {
-    const lines = data.trim().split('\n');
-    const header = lines.shift().split(','); // Remove the header line and get the header
-    const initialPopulation = lines.map(createIndividualFromRow); // Create individuals from the remaining lines
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.text();
+    })
+    .then(data => {
+        const lines = data.trim().split('\n');
+        const header = lines.shift().split(','); // Remove the header line and get the header
+        const initialPopulation = lines.map(createIndividualFromRow); // Create individuals from the remaining lines
 
-    runGeneticAlgorithm(initialPopulation);
-})
-.catch(error => {
-    console.error('Error fetching or processing the CSV file:', error);
-});
-  
+        runGeneticAlgorithm(initialPopulation);
+    })
+    .catch(error => {
+        console.error('Error fetching or processing the CSV file:', error);
+    });
