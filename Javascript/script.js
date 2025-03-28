@@ -33,12 +33,12 @@ function selectParent(population, tournamentSize = 3) {
     return tournament.reduce((best, current) => (current.fitness > best.fitness ? current : best));
 }
 
-function crossover(parent1, parent2){
+function crossover(parent1, parent2) {
     // Determines if the child will have the same condition as one of the parents or both
     let condition = "";
-    if (parent1.condition === parent2.condition){
+    if (parent1.condition === parent2.condition) {
         condition = parent1.condition;
-    } else{
+    } else {
         condition = Math.random() < 0.5 ? parent1.condition : parent2.condition;
     }
 
@@ -46,16 +46,16 @@ function crossover(parent1, parent2){
     // If the condition is "S", the expressivity is set to 0
     // Otherwise, it is the average of the parents' expressivity
     let expressivity = 0;
-    if (condition !== "S"){
-        expressivity = Math.floor((parent1.expressivity + parent2.expressivity) / 2);
+    if (condition !== "S") {
+        expressivity = Math.random();
     }
 
     // Create a new child individual
-    const child = new Individual(parent1.id, parent1.age, condition, expressivity, []);
+    const child = new Individual(null, parent1.age, condition, expressivity, []);
 
     // Crossover logic
-    for (let i = 0; i < parent1.genes.length; i++){
-        if (Math.random() < 0.5){
+    for (let i = 0; i < parent1.genes.length; i++) {
+        if (Math.random() < 0.5) {
             child.genes[i] = parent1.genes[i];
         } else {
             child.genes[i] = parent2.genes[i];
