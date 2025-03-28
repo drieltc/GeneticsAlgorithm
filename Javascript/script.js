@@ -24,10 +24,38 @@ function calculateFitness(individual){
     individual.fitness = individual.expressivity;
 }
 
+function selectParent(population){
+    const randomIndex = Math.floor(Math.random() * population.length);
+    return population[randomIndex];
+}
+
+
 function runGeneticAlgorithm(initialPopulation, generations = 100){
     let cpInitialPopulation = [...initialPopulation]; // Copy of the initial population to avoid modifying it
     
+    // Calculate fitness for each individual in the initial population
     cpInitialPopulation.forEach(calculateFitness);
+    cpInitialPopulation.sort((a, b) => b.fitness - a.fitness); // Sort by fitness in descending order
+
+    let population = [...cpInitialPopulation]
+
+    for (let generation = 0; generation < generations; generation++){
+        const newPopulation = [];
+
+        // Keep the top 10% of the population
+        const top10Percent = Math.floor(population.length * 0.1);
+        for (let i = 0; i < top10Percent; i++){
+            newPopulation.push(population[i]);
+        }
+
+        // Create the rest of the new generation
+        while (newPopulation.length < population.length){
+            // Selection
+            const parent1 = selectParent(population);
+            const parent2 = selectParent(population);        
+        }
+    }
+
 }  
 // Fetch the CSV file and create the initial population
 fetch('/Dados/dataset_amostra.csv')
