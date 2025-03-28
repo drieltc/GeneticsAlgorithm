@@ -62,14 +62,19 @@ function crossover(parent1, parent2){
 }
 
 function mutate(individual){
+    change = false;
     for (let i = 0; i < individual.genes.length; i++){
         if (Math.random() < 0.01){ // 1% mutation chance
             individual.genes[i] = Math.floor(Math.random() * 2);
-            if (individual.condition !== "S"){
-                individual.expressivity = Math.floor(Math.random() * 100); // Random expressivity
-            }
+            change = true;
         }
     }
+    if (change) {
+        if (individual.condition !== "S"){
+            individual.expressivity = Math.floor(Math.random() * 100); // Random expressivity
+        }
+    }
+    return individual;
 }
 
 function runGeneticAlgorithm(initialPopulation, generations = 1){
@@ -99,7 +104,7 @@ function runGeneticAlgorithm(initialPopulation, generations = 1){
             const child = crossover(parent1, parent2);
 
             // Mutation
-            mutate(child);
+            child = mutate(child);
 
             //calculateFitness(child);
 
