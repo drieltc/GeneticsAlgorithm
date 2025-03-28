@@ -24,9 +24,13 @@ function calculateFitness(individual){
     individual.fitness = individual.expressivity;
 }
 
-function selectParent(population){
-    const randomIndex = Math.floor(Math.random() * population.length);
-    return population[randomIndex];
+function selectParent(population, tournamentSize = 3) {
+    const tournament = [];
+    for (let i = 0; i < tournamentSize; i++) {
+        const randomIndex = Math.floor(Math.random() * population.length);
+        tournament.push(population[randomIndex]);
+    }
+    return tournament.reduce((best, current) => (current.fitness > best.fitness ? current : best));
 }
 
 function crossover(parent1, parent2){
@@ -71,13 +75,13 @@ function mutate(individual){
     }
     if (change) {
         if (individual.condition !== "S"){
-            individual.expressivity = Math.floor(Math.random() * 100); // Random expressivity
+            individual.expressivity = Math.floor(Math.random()); // Random expressivity
         }
     }
     return individual;
 }
 
-function runGeneticAlgorithm(initialPopulation, generations = 1){
+function runGeneticAlgorithm(initialPopulation, generations = 100){
     let cpInitialPopulation = [...initialPopulation]; // Copy of the initial population to avoid modifying it
     
     // Calculate fitness for each individual in the initial population
@@ -101,20 +105,25 @@ function runGeneticAlgorithm(initialPopulation, generations = 1){
             const parent1 = selectParent(population);
             const parent2 = selectParent(population);
             
-            const child = crossover(parent1, parent2);
+            let child = crossover(parent1, parent2);
 
             // Mutation
             child = mutate(child);
 
-            //calculateFitness(child);
+            calculateFitness(child);
 
-            //newPopulation.push(child);
+            newPopulation.push(child);
         }
+        population = newPopulation;
+        population.sort((a, b) => b.fitness - a.fitness);
+        console.log(`Generation ${generation + 1} - Best Fitness: ${population[0].fitness}`);
     }
-
+    population.sort((a, b) => b.fitness - a.fitness);
+    console.log("Best individual found:", population[0]);
+    return population[0];
 }  
 // Fetch the CSV file and create the initial population
-fetch('/Dados/dataset_pamostra.csv')
+fetch('/Dados/dataset_amostra.csv')
 .then(response => {
     if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
