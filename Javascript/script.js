@@ -1,9 +1,5 @@
 class Individual {
-    constructor(id, age, condition, expressivity, genes) {
-        this.id = id;
-        this.age = age;
-        this.condition = condition;
-        this.expressivity = expressivity;
+    constructor(genes) {
         this.genes = genes.map(gene => parseInt(gene));
         this.fitness = 0;
     }
@@ -12,19 +8,59 @@ class Individual {
 // Function to create an Individual from a CSV row
 function createIndividualFromRow(row) {
     const values = row.split(',');
-    const id = values[0];
-    const age = values[1];
-    const condition = values[2];
-    const expressivity = values[3];
-    const genes = values.slice(4); // Genes start from the 5th column
-    return new Individual(id, age, condition, expressivity, genes);
+    const genes = values.slice(4).map(gene => parseInt(gene)); // Genes start from the 5th column
+    return {
+        genes: genes,
+        condition: values[2]
+    };
 }
 
-function calculateFitness(individual) {
-    individual.fitness = individual.expressivity;
+// Function to calculate the probability of having condition "A" based on the genes that are present
+function calculateProbability(population, geneSubset) {
+    let countA = 0;
+    let countTotal = 0;
+
+    for (const individual of population) {
+        let match = true;
+        for (let i = 0; i < geneSubset.length; i++) {
+            if (geneSubset[i] === 1 && individual.genes[i] !== 1) {
+                match = false;
+                break;
+            }
+        }
+        if (match) {
+            countTotal++;
+            if (individual.condition === "A") {
+                countA++;
+            }
+        }
+    }
+
+    if (countTotal === 0) {
+        return 0; // Avoid division by zero
+    }
+    return countA / countTotal;
 }
 
-// Tournament Selection
+// New Fitness Function
+function calculateFitness(individual, population) {
+    const probability = calculateProbability(population, individual.genes);
+    const subsetSize = individual.genes.reduce((sum, gene) => sum + gene, 0);
+
+    // Reward for high probability of condition "A"
+    let fitness = probability;
+
+    // Penalty for large subset size
+    fitness -= subsetSize * 0.01; // Adjust the penalty factor (0.01) as needed
+
+    // Penalty for not reaching 50% probability
+    if (probability < 0.5) {
+        fitness -= 1; // Adjust the penalty as needed
+    }
+
+    individual.fitness = fitness;
+}
+
 function selectParent(population, tournamentSize = 3) {
     const tournament = [];
     for (let i = 0; i < tournamentSize; i++) {
@@ -35,74 +71,46 @@ function selectParent(population, tournamentSize = 3) {
 }
 
 function crossover(parent1, parent2) {
-    // Determines if the child will have the same condition as one of the parents or both
-    let condition = "";
-    if (parent1.condition === parent2.condition) {
-        condition = parent1.condition;
-    } else {
-        condition = Math.random() < 0.5 ? parent1.condition : parent2.condition;
-    }
-
-    // Determines the expressivity of the child
-    // If the condition is "S", the expressivity is set to 0
-    // Otherwise, it is the average of the parents' expressivity
-    let expressivity = 0;
-    if (condition !== "S") {
-        expressivity = Math.floor((parent1.expressivity + parent2.expressivity) / 2);
-    }
-
-    // Create a new child individual
-    const child = new Individual(null, parent1.age, condition, expressivity, []);
-
-    // Crossover logic
+    const childGenes = [];
     for (let i = 0; i < parent1.genes.length; i++) {
-        if (Math.random() < 0.5) {
-            child.genes[i] = parent1.genes[i];
-        } else {
-            child.genes[i] = parent2.genes[i];
-        }
+        childGenes.push(Math.random() < 0.5 ? parent1.genes[i] : parent2.genes[i]);
     }
-
-    return child;
+    return new Individual(childGenes);
 }
 
 function mutate(individual, mutationRate = 0.01) {
-    let change = false;
     for (let i = 0; i < individual.genes.length; i++) {
-        if (Math.random() < mutationRate) { // mutation chance
-            individual.genes[i] = Math.floor(Math.random() * 2);
-            change = true;
+        if (Math.random() < mutationRate) {
+            individual.genes[i] = 1 - individual.genes[i]; // Flip the gene (0 to 1, or 1 to 0)
         }
     }
-    if (change) {
-        if (individual.condition !== "S") {
-            individual.expressivity = Math.floor(Math.random()); // Random expressivity
-        }
-    }
-    return individual;
 }
 
 function runGeneticAlgorithm(initialPopulation, populationSize = 100, generations = 100, mutationRate = 0.01, tournamentSize = 3) {
     let cpInitialPopulation = [...initialPopulation]; // Copy of the initial population to avoid modifying it
 
+    // Create a new population with random subsets of genes
+    let population = Array.from({ length: populationSize }, () => {
+        const genes = Array(cpInitialPopulation[0].genes.length).fill(0).map(() => Math.random() < 0.5 ? 1 : 0);
+        return new Individual(genes);
+    });
+
     // Calculate fitness for each individual in the initial population
-    cpInitialPopulation.forEach(calculateFitness);
-    cpInitialPopulation.sort((a, b) => b.fitness - a.fitness); // Sort by fitness in descending order
+    population.forEach(individual => calculateFitness(individual, cpInitialPopulation));
+    population.sort((a, b) => b.fitness - a.fitness); // Sort by fitness in descending order
 
-    let population = [...cpInitialPopulation]
-
-    // Ensure the population size is met
-    while (population.length < populationSize) {
-        const randomIndex = Math.floor(Math.random() * initialPopulation.length);
-        population.push(new Individual(...Object.values(initialPopulation[randomIndex])));
-    }
+    let bestIndividual = null;
+    let bestFitness = -Infinity;
 
     for (let generation = 0; generation < generations; generation++) {
         const newPopulation = [];
 
+        // Elitism: Keep the best individual from the previous generation
+        newPopulation.push(population[0]);
+
         // Keep the top 10% of the population
         const top10Percent = Math.floor(population.length * 0.1);
-        for (let i = 0; i < top10Percent; i++) {
+        for (let i = 1; i < top10Percent; i++) {
             newPopulation.push(population[i]);
         }
 
@@ -117,17 +125,23 @@ function runGeneticAlgorithm(initialPopulation, populationSize = 100, generation
             // Mutation
             mutate(child, mutationRate);
 
-            calculateFitness(child);
+            calculateFitness(child, cpInitialPopulation);
 
             newPopulation.push(child);
         }
         population = newPopulation;
         population.sort((a, b) => b.fitness - a.fitness);
         console.log(`Generation ${generation + 1} - Best Fitness: ${population[0].fitness}`);
+
+        // Update best individual
+        if (population[0].fitness > bestFitness) {
+            bestFitness = population[0].fitness;
+            bestIndividual = population[0];
+        }
     }
-    population.sort((a, b) => b.fitness - a.fitness);
-    console.log("Best individual found:", population[0]);
-    return population[0];
+
+    console.log("Smallest subset found:", bestIndividual.genes);
+    return bestIndividual;
 }
 
 // Fetch the CSV file and create the initial population
