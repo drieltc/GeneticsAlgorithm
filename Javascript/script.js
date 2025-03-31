@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+
 class Individual {
     constructor(genes) {
         this.genes = genes.map(gene => parseInt(gene));
@@ -144,21 +147,20 @@ function runGeneticAlgorithm(initialPopulation, populationSize = 100, generation
     return bestIndividual;
 }
 
-// Fetch the CSV file and create the initial population
-fetch('/Dados/dataset_amostra.csv')
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.text();
-    })
-    .then(data => {
+// Function to read the CSV file and create the initial population
+function readCSVAndRunGA(filePath) {
+    try {
+        const absolutePath = path.resolve(__dirname, filePath);
+        const data = fs.readFileSync(absolutePath, 'utf-8');
         const lines = data.trim().split('\n');
         const header = lines.shift().split(','); // Remove the header line and get the header
         const initialPopulation = lines.map(createIndividualFromRow); // Create individuals from the remaining lines
 
         runGeneticAlgorithm(initialPopulation);
-    })
-    .catch(error => {
-        console.error('Error fetching or processing the CSV file:', error);
-    });
+    } catch (error) {
+        console.error('Error reading or processing the CSV file:', error);
+    }
+}
+
+// Call the function to read the CSV and run the genetic algorithm
+readCSVAndRunGA('../Dados/dataset_amostra.csv');
