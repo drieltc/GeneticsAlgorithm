@@ -1,8 +1,14 @@
+// utils/fileReader.js
 const fs = require('fs');
 const path = require('path');
 const { Individual } = require('../models/individual');
 
-// Function to create an Individual from a CSV row
+/**
+ * Creates an Individual object from a CSV row.
+ *
+ * @param {string} row - A row from the CSV file.
+ * @returns {object} An object representing an individual.
+ */
 function createIndividualFromRow(row) {
     const values = row.split(',');
     const genes = values.slice(4).map(gene => parseInt(gene)); // Genes start from the 5th column
@@ -12,14 +18,19 @@ function createIndividualFromRow(row) {
     };
 }
 
-// Function to read the CSV file and create the initial population
+/**
+ * Reads a CSV file and creates the initial population.
+ *
+ * @param {string} filePath - The path to the CSV file.
+ * @returns {Promise<Array<object>>} A promise that resolves with the initial population.
+ */
 async function readCSVAndCreatePopulation(filePath) {
     try {
         const absolutePath = path.resolve(__dirname, '../', filePath);
         const data = fs.readFileSync(absolutePath, 'utf-8');
         const lines = data.trim().split('\n');
-        const header = lines.shift().split(','); // Remove the header line and get the header
-        const initialPopulation = lines.map(createIndividualFromRow); // Create individuals from the remaining lines
+        lines.shift(); // Remove the header line
+        const initialPopulation = lines.map(createIndividualFromRow);
         return initialPopulation;
     } catch (error) {
         console.error('Error reading or processing the CSV file:', error);
