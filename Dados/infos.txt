@@ -1,0 +1,4 @@
+1MB - 110 onus; 1000 entradas
+10MB - 101 onus; 10000 entradas
+100MB - 1025 onus; 10000 entradas
+1GB - 1025 onus; 100000 entrads
