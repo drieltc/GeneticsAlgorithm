@@ -1,6 +1,7 @@
 # Ignore large datasets
 Dados/dataset_pacientes.csv
 Dados/1GB.csv
+Dados/100MB.csv
 
 # Ignore build artifacts
 Java/target/
@@ -9,7 +10,7 @@ Java/target/
 Java/.idea/
 
 # Ignore Node.js dependencies
-node_modules/
+js/node_modules/
 
 # Ignore temporary files
 *.log
