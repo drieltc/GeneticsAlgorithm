@@ -1,4 +1,4 @@
-function calculateFitness(individual, geneSubset, qtdOnus = 2) {
+function calculateFitness(individual, geneSubset, qtdOnus = 2, limit = 35000) {
     let fitness = 0;
     let onus = [];
     for (let i = 0; i < qtdOnus; i++) {
@@ -16,7 +16,7 @@ function calculateFitness(individual, geneSubset, qtdOnus = 2) {
                   onus[j] += geneSubset[i][onusKey];
                 }
 
-                if (onus[j] > 35000) {
+                if (onus[j] > limit) {
                     fitness = 0;
                     return fitness;
                 }

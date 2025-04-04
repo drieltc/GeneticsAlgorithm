@@ -32,7 +32,7 @@ function sortPopulation(population) {
     return population;
 }
 
-function geneticAlgorithm(mutationRate = 0.01, generations = 100, initialPopulation, geneSubset, qtdOnus, tournamentSize) {
+function geneticAlgorithm(mutationRate = 0.01, generations = 100, initialPopulation, geneSubset, qtdOnus, tournamentSize, limit) {
 
     let population = [...initialPopulation];
     const populationSize = population.length;
@@ -47,7 +47,7 @@ function geneticAlgorithm(mutationRate = 0.01, generations = 100, initialPopulat
 
             let child = crossover(parent1, parent2);
             child = mutate(child, mutationRate);
-            child.fitness = calculateFitness(child, geneSubset, qtdOnus);
+            child.fitness = calculateFitness(child, geneSubset, qtdOnus, limit);
             newPopulation.push(child);
         }
         population = newPopulation;
