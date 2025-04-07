@@ -2,7 +2,7 @@ const { readCSV, verifyCSV, Parse } = require('./utils/readFile');
 const { createInitialPopulation } = require('./algorithms/population-creator');
 const { geneticAlgorithm } = require('./algorithms/genetic-algorithm');
 
-const size = "1MB"
+const size = "1KB"
 const filepath = `../Dados/${size}.csv`;
 const data = readCSV(filepath);
 verifyCSV(data);
@@ -23,13 +23,7 @@ const MUTATION_RATE = 0.01;
 const GENERATIONS = 100;
 const TOURNAMENT_SIZE = 3;
 
-const initialPopulation = createInitialPopulation(POPULATION_SIZE, data, chromosomeLength, QTD_ONUS);
-
-if (initialPopulation.length > 0) {
-    console.log("Initial population created successfully.");
-} else {
-    console.error("Failed to create initial population.");
-}
+const initialPopulation = createInitialPopulation(POPULATION_SIZE, data, chromosomeLength, QTD_ONUS, limit);
 
 const bestSolution = geneticAlgorithm(MUTATION_RATE, GENERATIONS, initialPopulation, data, QTD_ONUS, TOURNAMENT_SIZE, limit);
 if (!bestSolution) {

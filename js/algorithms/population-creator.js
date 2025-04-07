@@ -9,14 +9,14 @@ function createRandomChromosome(length) {
     return chromosome;
 }
 
-function createInitialPopulation(populationSize, data, chromosomeLength, qtdOnus) {
+function createInitialPopulation(populationSize, data, chromosomeLength, qtdOnus, limit) {
     // 2. Create the population
     const population = [];
     for (let i = 0; i < populationSize; i++) {
         // Create a random chromosome
         const chromosome = createRandomChromosome(chromosomeLength);
         const individual = new Individual(chromosome);
-        individual.fitness = calculateFitness(individual, data, qtdOnus);
+        individual.fitness = calculateFitness(individual, data, qtdOnus, limit);
         population.push(individual);
 
         //console.log(`Individual ${i}: Fitness: ${individual.fitness}`);
